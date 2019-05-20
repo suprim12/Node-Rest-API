@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const keys = require("../config/keys");
 const { Users, regValidate, logValidate } = require("../models/Users");
 const auth = require("./auth");
+const passport = require("passport");
 /**
  *  @meth GET METHOD
  *  @des  Get all users
@@ -20,6 +21,23 @@ router.get("/", auth, async (req, res) => {
     })
     .catch(err => res.status(400).send(`Something went wrong - ${err}`));
 });
+/**
+ *  @meth GET METHOD
+ *  @des  Get all users
+ */
+router.get(
+  "/all",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    await Users.find()
+      .select(["email", "avatar", "username", "date"])
+      .then(users => {
+        if (!users) return res.status(404).send("No users found");
+        return res.json(users);
+      })
+      .catch(err => res.status(400).send(`Something went wrong - ${err}`));
+  }
+);
 /**
  *  @meth POST METHOD
  *  @des  Register Users

@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const { dbURI } = require("./config/keys");
 const users = require("./routes/users");
+const passport = require("passport");
 const app = express();
 // Connection
 mongoose
@@ -11,6 +12,9 @@ mongoose
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(passport.initialize());
+// Config
+require("./config/passport")(passport);
 // Routes Middleware
 app.use("/api/users", users);
 // Listen
